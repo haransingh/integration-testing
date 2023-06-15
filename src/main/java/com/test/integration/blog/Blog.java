@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -30,7 +31,7 @@ public class Blog {
     private String title;
     @Column(nullable = false)
     private String des;
-    private LocalDateTime date;
+    private LocalDate date;
 
     @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)

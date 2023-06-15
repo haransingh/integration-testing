@@ -1,6 +1,5 @@
 package com.test.integration.user;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,18 +8,17 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final ObjectMapper mapper;
+    private final UserResponseDTOMapper responseDTOMapper;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, ObjectMapper mapper) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, UserResponseDTOMapper responseDTOMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-        this.mapper = mapper;
+        this.responseDTOMapper = responseDTOMapper;
     }
 
     @Override
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
-        User user = userRepository.save(userMapper.apply(userRequestDTO));
-        return null;
+        return responseDTOMapper.apply(userRepository.save(userMapper.apply(userRequestDTO)));
     }
 
     @Override

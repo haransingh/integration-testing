@@ -1,25 +1,40 @@
 package com.test.integration.blog;
 
+import com.test.integration.user.User;
+import com.test.integration.user.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BlogServiceImpl implements BlogService {
     private final BlogRepository blogRepository;
-    private final BlogMapper blogMapper;
     private final BlogResponseDTOMapper responseDTOMapper;
+    private final UserRepository userRepository;
 
-    public BlogServiceImpl(BlogRepository blogRepository, BlogMapper blogMapper, BlogResponseDTOMapper responseDTOMapper) {
+    public BlogServiceImpl(BlogRepository blogRepository, BlogResponseDTOMapper responseDTOMapper, UserRepository userRepository) {
         this.blogRepository = blogRepository;
-        this.blogMapper = blogMapper;
         this.responseDTOMapper = responseDTOMapper;
+        this.userRepository = userRepository;
     }
 
     @Override
     public BlogResponseDTO createBlog(BlogRequestDTO blogRequestDTO) {
-        Blog blog = blogRepository.save(blogMapper.apply(blogRequestDTO));
-        return responseDTOMapper.apply(blog);
+        Optional<User> user = userRepository.findById(blogRequestDTO.userId());
+        if (user.isPresent()) {
+            Blog blog = new Blog(
+                    null,
+                    blogRequestDTO.title(),
+                    blogRequestDTO.des(),
+                    LocalDate.now(),
+                    user.get()
+            );
+            return responseDTOMapper.apply(blogRepository.save(blog));
+        }
+        return null;
     }
 
     @Override
